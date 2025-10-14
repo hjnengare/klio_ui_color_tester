@@ -79,8 +79,34 @@ class ColorSchemeCustomizer {
       
       // Icons & Accents
       icon: document.getElementById('iconColor'),
+      iconHover: document.getElementById('iconHoverColor'),
       accent: document.getElementById('accentColor'),
-      highlight: document.getElementById('highlightColor')
+      secondaryAccent: document.getElementById('secondaryAccent'),
+      highlight: document.getElementById('highlightColor'),
+      
+      // Navigation & Links
+      navLink: document.getElementById('navLinkColor'),
+      navLinkHover: document.getElementById('navLinkHover'),
+      navLinkActive: document.getElementById('navLinkActive'),
+      breadcrumb: document.getElementById('breadcrumbColor'),
+      
+      // Status & Feedback
+      success: document.getElementById('successColor'),
+      error: document.getElementById('errorColor'),
+      warning: document.getElementById('warningColor'),
+      info: document.getElementById('infoColor'),
+      
+      // Borders & Dividers
+      border: document.getElementById('borderColor'),
+      borderHover: document.getElementById('borderHoverColor'),
+      divider: document.getElementById('dividerColor'),
+      focus: document.getElementById('focusColor'),
+      
+      // Labels & Tags
+      label: document.getElementById('labelColor'),
+      tagBg: document.getElementById('tagBgColor'),
+      tagText: document.getElementById('tagTextColor'),
+      badge: document.getElementById('badgeColor')
     };
 
     this.htmlColorInput = document.getElementById('htmlColorInput');
@@ -251,10 +277,36 @@ class ColorSchemeCustomizer {
     root.style.setProperty('--button-hover', colors.buttonHover);
     root.style.setProperty('--button-active', colors.buttonActive);
     
-    // Apply accent colors
-    root.style.setProperty('--accent-color', colors.accent);
+    // Apply icon & accent colors
     root.style.setProperty('--icon-color', colors.icon);
+    root.style.setProperty('--icon-hover', colors.iconHover);
+    root.style.setProperty('--accent-color', colors.accent);
+    root.style.setProperty('--secondary-accent', colors.secondaryAccent);
     root.style.setProperty('--highlight-color', colors.highlight);
+    
+    // Apply navigation colors
+    root.style.setProperty('--nav-link-color', colors.navLink);
+    root.style.setProperty('--nav-link-hover', colors.navLinkHover);
+    root.style.setProperty('--nav-link-active', colors.navLinkActive);
+    root.style.setProperty('--breadcrumb-color', colors.breadcrumb);
+    
+    // Apply status & feedback colors
+    root.style.setProperty('--success-color', colors.success);
+    root.style.setProperty('--error-color', colors.error);
+    root.style.setProperty('--warning-color', colors.warning);
+    root.style.setProperty('--info-color', colors.info);
+    
+    // Apply border & divider colors
+    root.style.setProperty('--border-color', colors.border);
+    root.style.setProperty('--border-hover', colors.borderHover);
+    root.style.setProperty('--divider-color', colors.divider);
+    root.style.setProperty('--focus-color', colors.focus);
+    
+    // Apply label & tag colors
+    root.style.setProperty('--label-color', colors.label);
+    root.style.setProperty('--tag-bg', colors.tagBg);
+    root.style.setProperty('--tag-text', colors.tagText);
+    root.style.setProperty('--badge-color', colors.badge);
     
     // Apply card styling
     this.updateCardStyling();
@@ -496,8 +548,34 @@ class ColorSchemeCustomizer {
       
       // Icons & Accents
       icon: this.colorInputs.icon.value,
+      iconHover: this.colorInputs.iconHover.value,
       accent: this.colorInputs.accent.value,
-      highlight: this.colorInputs.highlight.value
+      secondaryAccent: this.colorInputs.secondaryAccent.value,
+      highlight: this.colorInputs.highlight.value,
+      
+      // Navigation & Links
+      navLink: this.colorInputs.navLink.value,
+      navLinkHover: this.colorInputs.navLinkHover.value,
+      navLinkActive: this.colorInputs.navLinkActive.value,
+      breadcrumb: this.colorInputs.breadcrumb.value,
+      
+      // Status & Feedback
+      success: this.colorInputs.success.value,
+      error: this.colorInputs.error.value,
+      warning: this.colorInputs.warning.value,
+      info: this.colorInputs.info.value,
+      
+      // Borders & Dividers
+      border: this.colorInputs.border.value,
+      borderHover: this.colorInputs.borderHover.value,
+      divider: this.colorInputs.divider.value,
+      focus: this.colorInputs.focus.value,
+      
+      // Labels & Tags
+      label: this.colorInputs.label.value,
+      tagBg: this.colorInputs.tagBg.value,
+      tagText: this.colorInputs.tagText.value,
+      badge: this.colorInputs.badge.value
     };
     
     this.applyColors(colors);
