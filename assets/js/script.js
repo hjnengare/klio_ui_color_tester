@@ -51,24 +51,43 @@ class ColorSchemeCustomizer {
     this.panel = document.getElementById('colorSchemePanel');
     this.toggleBtn = document.getElementById('colorPanelToggle');
     this.closeBtn = document.getElementById('colorPanelClose');
-    this.applyBtn = document.getElementById('applyColors');
+    this.saveBtn = document.getElementById('saveColors');
     this.resetBtn = document.getElementById('resetColors');
     this.schemeButtons = document.querySelectorAll('.scheme-btn');
-    this.colorInputs = {
-      primary: document.getElementById('primaryColor'),
-      secondary: document.getElementById('secondaryColor'),
-      accent: document.getElementById('accentColor'),
-      text: document.getElementById('textColor'),
-      background: document.getElementById('backgroundColor')
-    };
     
-    this.htmlColorInputs = {
-      primary: document.getElementById('htmlPrimaryColor'),
-      secondary: document.getElementById('htmlSecondaryColor'),
-      accent: document.getElementById('htmlAccentColor'),
-      text: document.getElementById('htmlTextColor'),
-      background: document.getElementById('htmlBackgroundColor')
+    // New organized color inputs
+    this.colorInputs = {
+      // Text & Typography
+      text: document.getElementById('textColor'),
+      link: document.getElementById('linkColor'),
+      heading: document.getElementById('headingColor'),
+      
+      // Background & Layout
+      background: document.getElementById('backgroundColor'),
+      header: document.getElementById('headerColor'),
+      card: document.getElementById('cardColor'),
+      
+      // Buttons & Actions
+      button: document.getElementById('buttonColor'),
+      buttonHover: document.getElementById('buttonHoverColor'),
+      buttonActive: document.getElementById('buttonActiveColor'),
+      
+      // Cards & Components
+      cardShadow: document.getElementById('cardShadowColor'),
+      cardBorderRadius: document.getElementById('cardBorderRadius'),
+      cardShadowIntensity: document.getElementById('cardShadowIntensity'),
+      
+      // Icons & Accents
+      icon: document.getElementById('iconColor'),
+      accent: document.getElementById('accentColor'),
+      highlight: document.getElementById('highlightColor')
     };
+
+    this.htmlColorInput = document.getElementById('htmlColorInput');
+    this.applyHtmlBtn = document.getElementById('applyHtmlColor');
+
+    this.toast = document.getElementById('toast');
+    this.toastClose = document.getElementById('toastClose');
     
     this.init();
   }
@@ -84,9 +103,11 @@ class ColorSchemeCustomizer {
       this.panel.classList.remove('open');
     });
 
-    // Apply colors
-    this.applyBtn.addEventListener('click', () => {
-      this.applyCustomColors();
+    // Save colors button - only shows toast and closes modal
+    this.saveBtn.addEventListener('click', () => {
+      this.saveCurrentTheme();
+      this.showToast('success', 'Theme Saved!', 'Your color scheme has been applied successfully');
+      this.panel.classList.remove('open');
     });
 
     // Reset colors
@@ -115,61 +136,54 @@ class ColorSchemeCustomizer {
 
     // HTML color input handlers
     this.initHtmlColorInputs();
+
+    // Card styling handlers
+    this.initCardStyling();
+
+    // Toast notification handlers
+    this.initToastNotifications();
   }
 
   initHtmlColorInputs() {
-    // Apply buttons for HTML color inputs
-    document.querySelectorAll('.apply-html-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.target.dataset.target;
-        const inputId = `html${target.charAt(0).toUpperCase() + target.slice(1)}Color`;
-        const htmlInput = document.getElementById(inputId);
-        const colorInput = this.colorInputs[target];
-        
-        if (htmlInput && htmlInput.value.trim()) {
-          const color = this.parseHtmlColor(htmlInput.value.trim());
-          if (color) {
-            colorInput.value = color;
-            this.previewColors();
-            htmlInput.style.borderColor = '';
-            htmlInput.value = ''; // Clear after successful application
-          } else {
-            htmlInput.style.borderColor = '#e74c3c';
-            htmlInput.placeholder = 'Invalid color code!';
-            setTimeout(() => {
-              htmlInput.style.borderColor = '';
-              htmlInput.placeholder = htmlInput.getAttribute('data-original-placeholder') || '';
-            }, 3000);
-          }
+    // Single HTML color input handler
+    this.applyHtmlBtn.addEventListener('click', () => {
+      if (this.htmlColorInput && this.htmlColorInput.value.trim()) {
+        const color = this.parseHtmlColor(this.htmlColorInput.value.trim());
+        if (color) {
+          // Apply to text color by default, user can change manually
+          this.colorInputs.text.value = color;
+          this.previewColors();
+          this.htmlColorInput.style.borderColor = '';
+          this.htmlColorInput.value = '';
+        } else {
+          this.htmlColorInput.style.borderColor = '#e74c3c';
+          this.htmlColorInput.placeholder = 'Invalid color code!';
+          setTimeout(() => {
+            this.htmlColorInput.style.borderColor = '';
+            this.htmlColorInput.placeholder = this.htmlColorInput.getAttribute('data-original-placeholder') || '';
+          }, 3000);
         }
-      });
+      }
     });
 
     // Example color click handlers
     document.querySelectorAll('.example-color').forEach(example => {
       example.addEventListener('click', (e) => {
         const color = e.target.dataset.color;
-        const targetInput = this.htmlColorInputs.primary; // Default to primary
-        targetInput.value = color;
-        targetInput.focus();
+        this.htmlColorInput.value = color;
+        this.htmlColorInput.focus();
       });
     });
 
-    // Enter key support for HTML inputs
-    Object.values(this.htmlColorInputs).forEach(input => {
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          const target = input.id.replace('html', '').replace('Color', '').toLowerCase();
-          const applyBtn = document.querySelector(`[data-target="${target}Color"]`);
-          if (applyBtn) {
-            applyBtn.click();
-          }
-        }
-      });
-
-      // Store original placeholder
-      input.setAttribute('data-original-placeholder', input.placeholder);
+    // Enter key support for HTML input
+    this.htmlColorInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.applyHtmlBtn.click();
+      }
     });
+
+    // Store original placeholder
+    this.htmlColorInput.setAttribute('data-original-placeholder', this.htmlColorInput.placeholder);
   }
 
   applyPresetScheme(schemeName) {
@@ -218,30 +232,32 @@ class ColorSchemeCustomizer {
   applyColors(colors) {
     const root = document.documentElement;
     
-    // Apply primary colors with variations
-    root.style.setProperty('--primary-color', colors.primary);
-    root.style.setProperty('--primary-color-light', this.lightenColor(colors.primary, 20));
-    root.style.setProperty('--primary-color-dark', this.darkenColor(colors.primary, 20));
-    
-    // Apply secondary colors with variations
-    root.style.setProperty('--secondary-color', colors.secondary);
-    root.style.setProperty('--secondary-color-light', this.lightenColor(colors.secondary, 20));
-    root.style.setProperty('--secondary-color-dark', this.darkenColor(colors.secondary, 20));
-    
-    // Apply accent colors with variations
-    root.style.setProperty('--accent-color', colors.accent);
-    root.style.setProperty('--accent-color-light', this.lightenColor(colors.accent, 20));
-    root.style.setProperty('--accent-color-dark', this.darkenColor(colors.accent, 20));
-    
-    // Apply text colors
+    // Apply text & typography colors
     root.style.setProperty('--text-primary', colors.text);
     root.style.setProperty('--text-secondary', this.lightenColor(colors.text, 30));
     root.style.setProperty('--text-light', this.lightenColor(colors.text, 50));
+    root.style.setProperty('--link-color', colors.link);
+    root.style.setProperty('--heading-color', colors.heading);
     
-    // Apply background colors
+    // Apply background & layout colors
     root.style.setProperty('--bg-primary', colors.background);
     root.style.setProperty('--bg-secondary', this.lightenColor(colors.background, 2));
     root.style.setProperty('--bg-tertiary', this.lightenColor(colors.background, 5));
+    root.style.setProperty('--header-bg', colors.header);
+    root.style.setProperty('--card-bg', colors.card);
+    
+    // Apply button colors
+    root.style.setProperty('--button-color', colors.button);
+    root.style.setProperty('--button-hover', colors.buttonHover);
+    root.style.setProperty('--button-active', colors.buttonActive);
+    
+    // Apply accent colors
+    root.style.setProperty('--accent-color', colors.accent);
+    root.style.setProperty('--icon-color', colors.icon);
+    root.style.setProperty('--highlight-color', colors.highlight);
+    
+    // Apply card styling
+    this.updateCardStyling();
   }
 
   resetToDefault() {
@@ -399,6 +415,152 @@ class ColorSchemeCustomizer {
     };
 
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  }
+
+  initCardStyling() {
+    // Card background color
+    this.cardInputs.background.addEventListener('input', () => {
+      this.updateCardStyling();
+    });
+
+    // Card shadow color
+    this.cardInputs.shadow.addEventListener('input', () => {
+      this.updateCardStyling();
+    });
+
+    // Border radius slider
+    this.cardInputs.borderRadius.addEventListener('input', (e) => {
+      document.getElementById('borderRadiusValue').textContent = e.target.value + 'px';
+      this.updateCardStyling();
+    });
+
+    // Shadow intensity slider
+    this.cardInputs.shadowIntensity.addEventListener('input', (e) => {
+      document.getElementById('shadowIntensityValue').textContent = e.target.value + 'px';
+      this.updateCardStyling();
+    });
+  }
+
+  updateCardStyling() {
+    const cards = document.querySelectorAll('.shop-card, .collection-card, .banner-card, .feature-card, .blog-card, .hero-card');
+    const shadowColor = this.colorInputs.cardShadow.value;
+    const shadowIntensity = this.colorInputs.cardShadowIntensity.value;
+    const borderRadius = this.colorInputs.cardBorderRadius.value;
+    const backgroundColor = this.colorInputs.card.value;
+
+    cards.forEach(card => {
+      card.style.backgroundColor = backgroundColor;
+      card.style.borderRadius = borderRadius + 'px';
+      card.style.boxShadow = `0 4px ${shadowIntensity}px rgba(${this.hexToRgb(shadowColor)}, 0.08)`;
+      
+      // Update hover shadow
+      card.style.setProperty('--hover-shadow', `0 8px ${shadowIntensity * 2}px rgba(${this.hexToRgb(shadowColor)}, 0.12)`);
+    });
+
+    // Add hover effect CSS
+    if (!document.getElementById('cardHoverStyles')) {
+      const style = document.createElement('style');
+      style.id = 'cardHoverStyles';
+      style.textContent = `
+        .shop-card:hover, .collection-card:hover, .banner-card:hover, 
+        .feature-card:hover, .blog-card:hover, .hero-card:hover {
+          box-shadow: var(--hover-shadow) !important;
+          transform: translateY(-2px);
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  saveCurrentTheme() {
+    const colors = {
+      // Text & Typography
+      text: this.colorInputs.text.value,
+      link: this.colorInputs.link.value,
+      heading: this.colorInputs.heading.value,
+      
+      // Background & Layout
+      background: this.colorInputs.background.value,
+      header: this.colorInputs.header.value,
+      card: this.colorInputs.card.value,
+      
+      // Buttons & Actions
+      button: this.colorInputs.button.value,
+      buttonHover: this.colorInputs.buttonHover.value,
+      buttonActive: this.colorInputs.buttonActive.value,
+      
+      // Cards & Components
+      cardShadow: this.colorInputs.cardShadow.value,
+      cardBorderRadius: this.colorInputs.cardBorderRadius.value,
+      cardShadowIntensity: this.colorInputs.cardShadowIntensity.value,
+      
+      // Icons & Accents
+      icon: this.colorInputs.icon.value,
+      accent: this.colorInputs.accent.value,
+      highlight: this.colorInputs.highlight.value
+    };
+    
+    this.applyColors(colors);
+    this.saveColors(colors);
+  }
+
+  hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+      `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+      '0, 0, 0';
+  }
+
+  initToastNotifications() {
+    // Close toast button
+    this.toastClose.addEventListener('click', () => {
+      this.hideToast();
+    });
+
+    // Auto-hide toast after 4 seconds
+    this.toast.addEventListener('animationend', () => {
+      if (this.toast.classList.contains('show')) {
+        setTimeout(() => {
+          this.hideToast();
+        }, 4000);
+      }
+    });
+  }
+
+  showToast(type = 'success', title = 'Success!', message = 'Style applied successfully') {
+    const toastIcon = this.toast.querySelector('.toast-icon ion-icon');
+    const toastTitle = this.toast.querySelector('.toast-title');
+    const toastText = this.toast.querySelector('.toast-text');
+
+    // Remove existing type classes
+    this.toast.classList.remove('success', 'error', 'warning');
+    
+    // Add new type class
+    this.toast.classList.add(type);
+
+    // Update icon based on type
+    switch (type) {
+      case 'success':
+        toastIcon.name = 'checkmark-circle';
+        break;
+      case 'error':
+        toastIcon.name = 'close-circle';
+        break;
+      case 'warning':
+        toastIcon.name = 'warning';
+        break;
+    }
+
+    // Update content
+    toastTitle.textContent = title;
+    toastText.textContent = message;
+
+    // Show toast
+    this.toast.classList.add('show');
+  }
+
+  hideToast() {
+    this.toast.classList.remove('show');
   }
 }
 

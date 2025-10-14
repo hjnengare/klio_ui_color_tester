@@ -68,10 +68,6 @@
 
         <div class="header-actions">
 
-          <button class="header-action-btn" aria-label="user">
-            <ion-icon name="person-outline" aria-hidden="true" aria-hidden="true"></ion-icon>
-          </button>
-
           <button class="header-action-btn" id="colorPanelToggle" aria-label="color scheme">
             <ion-icon name="color-palette-outline" aria-hidden="true"></ion-icon>
           </button>
@@ -1258,9 +1254,25 @@
     </article>
   </main>
 
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <div class="toast-content">
+      <div class="toast-icon">
+        <ion-icon name="checkmark-circle"></ion-icon>
+      </div>
+      <div class="toast-message">
+        <span class="toast-title">Success!</span>
+        <span class="toast-text">Style applied successfully</span>
+      </div>
+    </div>
+    <button class="toast-close" id="toastClose">
+      <ion-icon name="close"></ion-icon>
+    </button>
+  </div>
 
 
-  <!-- 
+
+  <!--
     - #FOOTER
   -->
 
@@ -1421,7 +1433,7 @@
       <h3>Color Scheme Customizer</h3>
       
       <div class="preset-schemes">
-        <h4>Preset Schemes</h4>
+        <h4>🎨 Quick Themes</h4>
         <div class="scheme-buttons">
           <button class="scheme-btn" data-scheme="default">Default</button>
           <button class="scheme-btn" data-scheme="ocean">Ocean</button>
@@ -1431,71 +1443,102 @@
         </div>
       </div>
       
-      <div class="custom-colors">
-        <h4>Custom Colors</h4>
-        
-        <div class="color-input-group">
-          <label for="primaryColor">Primary Color</label>
-          <input type="color" id="primaryColor" value="#2d5a3d">
+      <div class="ui-element-panels">
+        <div class="panel-section">
+          <h4>📝 Text & Typography</h4>
+          <div class="color-input-group">
+            <label for="textColor">Text Color</label>
+            <input type="color" id="textColor" value="#1f2937">
+          </div>
+          <div class="color-input-group">
+            <label for="linkColor">Link Color</label>
+            <input type="color" id="linkColor" value="#2563eb">
+          </div>
+          <div class="color-input-group">
+            <label for="headingColor">Heading Color</label>
+            <input type="color" id="headingColor" value="#111827">
+          </div>
         </div>
-        
-        <div class="color-input-group">
-          <label for="secondaryColor">Secondary Color</label>
-          <input type="color" id="secondaryColor" value="#60a5fa">
+
+        <div class="panel-section">
+          <h4>🏠 Background & Layout</h4>
+          <div class="color-input-group">
+            <label for="backgroundColor">Page Background</label>
+            <input type="color" id="backgroundColor" value="#ffffff">
+          </div>
+          <div class="color-input-group">
+            <label for="headerColor">Header Background</label>
+            <input type="color" id="headerColor" value="#ffffff">
+          </div>
+          <div class="color-input-group">
+            <label for="cardColor">Card Background</label>
+            <input type="color" id="cardColor" value="#ffffff">
+          </div>
         </div>
-        
-        <div class="color-input-group">
-          <label for="accentColor">Accent Color</label>
-          <input type="color" id="accentColor" value="#f59e0b">
+
+        <div class="panel-section">
+          <h4>🔘 Buttons & Actions</h4>
+          <div class="color-input-group">
+            <label for="buttonColor">Button Color</label>
+            <input type="color" id="buttonColor" value="#2563eb">
+          </div>
+          <div class="color-input-group">
+            <label for="buttonHoverColor">Button Hover</label>
+            <input type="color" id="buttonHoverColor" value="#1d4ed8">
+          </div>
+          <div class="color-input-group">
+            <label for="buttonActiveColor">Button Active</label>
+            <input type="color" id="buttonActiveColor" value="#1e40af">
+          </div>
         </div>
-        
-        <div class="color-input-group">
-          <label for="textColor">Text Color</label>
-          <input type="color" id="textColor" value="#1f2937">
+
+        <div class="panel-section">
+          <h4>📱 Cards & Components</h4>
+          <div class="color-input-group">
+            <label for="cardShadowColor">Card Shadow</label>
+            <input type="color" id="cardShadowColor" value="#000000">
+          </div>
+          <div class="color-input-group">
+            <label for="cardBorderRadius">Border Radius</label>
+            <input type="range" id="cardBorderRadius" min="0" max="24" value="12">
+            <span id="borderRadiusValue">12px</span>
+          </div>
+          <div class="color-input-group">
+            <label for="cardShadowIntensity">Shadow Intensity</label>
+            <input type="range" id="cardShadowIntensity" min="0" max="30" value="12">
+            <span id="shadowIntensityValue">12px</span>
+          </div>
         </div>
-        
-        <div class="color-input-group">
-          <label for="backgroundColor">Background Color</label>
-          <input type="color" id="backgroundColor" value="#ffffff">
+
+        <div class="panel-section">
+          <h4>🎯 Icons & Accents</h4>
+          <div class="color-input-group">
+            <label for="iconColor">Icon Color</label>
+            <input type="color" id="iconColor" value="#6b7280">
+          </div>
+          <div class="color-input-group">
+            <label for="accentColor">Accent Color</label>
+            <input type="color" id="accentColor" value="#f59e0b">
+          </div>
+          <div class="color-input-group">
+            <label for="highlightColor">Highlight Color</label>
+            <input type="color" id="highlightColor" value="#fef3c7">
+          </div>
         </div>
       </div>
       
       <div class="html-colors">
-        <h4>Paste HTML Color Codes</h4>
+        <h4>🎨 Paste HTML Color Codes</h4>
         <p class="help-text">Paste any HTML color code (hex, rgb, hsl) to apply instantly</p>
         
         <div class="color-input-group">
-          <label for="htmlPrimaryColor">Primary Color Code</label>
-          <input type="text" id="htmlPrimaryColor" placeholder="#FF5733 or rgb(255,87,51)">
-          <button type="button" class="apply-html-btn" data-target="primaryColor">Apply</button>
-        </div>
-        
-        <div class="color-input-group">
-          <label for="htmlSecondaryColor">Secondary Color Code</label>
-          <input type="text" id="htmlSecondaryColor" placeholder="#3498DB or rgb(52,152,219)">
-          <button type="button" class="apply-html-btn" data-target="secondaryColor">Apply</button>
-        </div>
-        
-        <div class="color-input-group">
-          <label for="htmlAccentColor">Accent Color Code</label>
-          <input type="text" id="htmlAccentColor" placeholder="#E74C3C or rgb(231,76,60)">
-          <button type="button" class="apply-html-btn" data-target="accentColor">Apply</button>
-        </div>
-        
-        <div class="color-input-group">
-          <label for="htmlTextColor">Text Color Code</label>
-          <input type="text" id="htmlTextColor" placeholder="#2C3E50 or rgb(44,62,80)">
-          <button type="button" class="apply-html-btn" data-target="textColor">Apply</button>
-        </div>
-        
-        <div class="color-input-group">
-          <label for="htmlBackgroundColor">Background Color Code</label>
-          <input type="text" id="htmlBackgroundColor" placeholder="#ECF0F1 or rgb(236,240,241)">
-          <button type="button" class="apply-html-btn" data-target="backgroundColor">Apply</button>
+          <label for="htmlColorInput">Color Code</label>
+          <input type="text" id="htmlColorInput" placeholder="#FF5733 or rgb(255,87,51)">
+          <button type="button" class="apply-html-btn" id="applyHtmlColor">Apply</button>
         </div>
         
         <div class="color-examples">
-          <h5>Color Code Examples:</h5>
+          <h5>Quick Color Examples:</h5>
           <div class="example-colors">
             <span class="example-color" data-color="#FF5733">#FF5733</span>
             <span class="example-color" data-color="#3498DB">#3498DB</span>
@@ -1508,8 +1551,8 @@
       </div>
       
       <div class="panel-actions">
-        <button class="btn btn-primary" id="applyColors">Apply Colors</button>
-        <button class="btn btn-secondary" id="resetColors">Reset to Default</button>
+        <button class="btn btn-primary" id="saveColors">💾 Save Theme</button>
+        <button class="btn btn-secondary" id="resetColors">🔄 Reset to Default</button>
       </div>
     </div>
   </div>
