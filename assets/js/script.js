@@ -245,11 +245,56 @@ class ColorSchemeCustomizer {
 
   previewColors() {
     const colors = {
-      primary: this.colorInputs.primary.value,
-      secondary: this.colorInputs.secondary.value,
-      accent: this.colorInputs.accent.value,
+      // Text & Typography
       text: this.colorInputs.text.value,
-      background: this.colorInputs.background.value
+      link: this.colorInputs.link.value,
+      heading: this.colorInputs.heading.value,
+      
+      // Background & Layout
+      background: this.colorInputs.background.value,
+      header: this.colorInputs.header.value,
+      card: this.colorInputs.card.value,
+      
+      // Buttons & Actions
+      button: this.colorInputs.button.value,
+      buttonHover: this.colorInputs.buttonHover.value,
+      buttonActive: this.colorInputs.buttonActive.value,
+      
+      // Cards & Components
+      cardShadow: this.colorInputs.cardShadow.value,
+      cardBorderRadius: this.colorInputs.cardBorderRadius.value,
+      cardShadowIntensity: this.colorInputs.cardShadowIntensity.value,
+      
+      // Icons & Accents
+      icon: this.colorInputs.icon.value,
+      iconHover: this.colorInputs.iconHover.value,
+      accent: this.colorInputs.accent.value,
+      secondaryAccent: this.colorInputs.secondaryAccent.value,
+      highlight: this.colorInputs.highlight.value,
+      
+      // Navigation & Links
+      navLink: this.colorInputs.navLink.value,
+      navLinkHover: this.colorInputs.navLinkHover.value,
+      navLinkActive: this.colorInputs.navLinkActive.value,
+      breadcrumb: this.colorInputs.breadcrumb.value,
+      
+      // Status & Feedback
+      success: this.colorInputs.success.value,
+      error: this.colorInputs.error.value,
+      warning: this.colorInputs.warning.value,
+      info: this.colorInputs.info.value,
+      
+      // Borders & Dividers
+      border: this.colorInputs.border.value,
+      borderHover: this.colorInputs.borderHover.value,
+      divider: this.colorInputs.divider.value,
+      focus: this.colorInputs.focus.value,
+      
+      // Labels & Tags
+      label: this.colorInputs.label.value,
+      tagBg: this.colorInputs.tagBg.value,
+      tagText: this.colorInputs.tagText.value,
+      badge: this.colorInputs.badge.value
     };
 
     this.applyColors(colors);
@@ -591,21 +636,34 @@ class ColorSchemeCustomizer {
 
   initToastNotifications() {
     // Close toast button
-    this.toastClose.addEventListener('click', () => {
-      this.hideToast();
-    });
+    if (this.toastClose) {
+      this.toastClose.addEventListener('click', () => {
+        this.hideToast();
+      });
+    }
 
     // Auto-hide toast after 4 seconds
-    this.toast.addEventListener('animationend', () => {
-      if (this.toast.classList.contains('show')) {
-        setTimeout(() => {
+    if (this.toast) {
+      this.toast.addEventListener('transitionend', () => {
+        if (this.toast.classList.contains('show')) {
+          setTimeout(() => {
+            this.hideToast();
+          }, 4000);
+        }
+      });
+
+      // Also close on click outside
+      this.toast.addEventListener('click', (e) => {
+        if (e.target === this.toast) {
           this.hideToast();
-        }, 4000);
-      }
-    });
+        }
+      });
+    }
   }
 
   showToast(type = 'success', title = 'Success!', message = 'Style applied successfully') {
+    if (!this.toast) return;
+
     const toastIcon = this.toast.querySelector('.toast-icon ion-icon');
     const toastTitle = this.toast.querySelector('.toast-title');
     const toastText = this.toast.querySelector('.toast-text');
@@ -617,27 +675,35 @@ class ColorSchemeCustomizer {
     this.toast.classList.add(type);
 
     // Update icon based on type
-    switch (type) {
-      case 'success':
-        toastIcon.name = 'checkmark-circle';
-        break;
-      case 'error':
-        toastIcon.name = 'close-circle';
-        break;
-      case 'warning':
-        toastIcon.name = 'warning';
-        break;
+    if (toastIcon) {
+      switch (type) {
+        case 'success':
+          toastIcon.name = 'checkmark-circle';
+          break;
+        case 'error':
+          toastIcon.name = 'close-circle';
+          break;
+        case 'warning':
+          toastIcon.name = 'warning';
+          break;
+      }
     }
 
     // Update content
-    toastTitle.textContent = title;
-    toastText.textContent = message;
+    if (toastTitle) toastTitle.textContent = title;
+    if (toastText) toastText.textContent = message;
 
     // Show toast
     this.toast.classList.add('show');
+
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      this.hideToast();
+    }, 4000);
   }
 
   hideToast() {
+    if (!this.toast) return;
     this.toast.classList.remove('show');
   }
 }

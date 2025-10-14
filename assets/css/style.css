@@ -34,6 +34,32 @@
   --accent-color: #f59e0b;
   --accent-color-light: #fbbf24;
   --accent-color-dark: #d97706;
+
+  /* Dynamic color variables - updated by color scheme panel */
+  --button-color: #2563eb;
+  --button-hover: #1d4ed8;
+  --button-active: #1e40af;
+  --icon-color: #6b7280;
+  --icon-hover: #374151;
+  --nav-link-color: #374151;
+  --nav-link-hover: #111827;
+  --nav-link-active: #059669;
+  --breadcrumb-color: #6b7280;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  --info-color: #3b82f6;
+  --border-color: #e5e7eb;
+  --border-hover: #d1d5db;
+  --divider-color: #f3f4f6;
+  --focus-color: #3b82f6;
+  --label-color: #374151;
+  --tag-bg: #f3f4f6;
+  --tag-text: #6b7280;
+  --badge-color: #ef4444;
+  --secondary-accent: #10b981;
+  --header-bg: #ffffff;
+  --card-bg: #ffffff;
   
   /* Text colors */
   --text-primary: #1f2937;
@@ -268,11 +294,17 @@ body {
 
 .btn-primary,
 .btn-secondary:is(:hover, :focus) {
-  background-color: var(--black);
+  background-color: var(--button-color);
   color: var(--white);
 }
 
-.btn-primary:is(:hover, :focus) { background-color: var(--hoockers-green); }
+.btn-primary:is(:hover, :focus) { 
+  background-color: var(--button-hover); 
+}
+
+.btn-primary:active { 
+  background-color: var(--button-active); 
+}
 
 .btn-secondary {
   background-color: var(--white);
@@ -427,7 +459,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: var(--white);
+  background-color: var(--header-bg);
   padding-block: 26px;
   z-index: 4;
 }
@@ -531,7 +563,36 @@ body {
   transition: var(--transition-1);
 }
 
-.mobile-navbar .navbar-link:is(:hover, :focus) { color: var(--hoockers-green); }
+.mobile-navbar .navbar-link:is(:hover, :focus) { color: var(--primary-color); }
+
+/* Dynamic color styles */
+.navbar-link {
+  color: var(--nav-link-color);
+}
+
+.navbar-link:is(:hover, :focus) {
+  color: var(--nav-link-hover);
+}
+
+.navbar-link.active {
+  color: var(--nav-link-active);
+}
+
+ion-icon {
+  color: var(--icon-color);
+}
+
+ion-icon:is(:hover, :focus) {
+  color: var(--icon-hover);
+}
+
+.btn-link {
+  color: var(--link-color);
+}
+
+.btn-link:is(:hover, :focus) {
+  color: var(--nav-link-hover);
+}
 
 .overlay {
   background-color: transparent;
