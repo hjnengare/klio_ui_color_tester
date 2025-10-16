@@ -65,7 +65,9 @@
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --text-light: #9ca3af;
-  
+  --link-color: #2563eb;
+  --heading-color: #111827;
+
   /* Background colors */
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
@@ -203,8 +205,8 @@ html {
 }
 
 body {
-  background-color: var(--white);
-  color: var(--gray-web);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-size: 1.6rem;
   font-weight: var(--fw-500);
   line-height: 1.6;
@@ -245,7 +247,7 @@ body {
 .h2,
 .h3,
 .h2-large {
-  color: var(--black);
+  color: var(--heading-color);
   font-weight: var(--fw-600);
   line-height: 1.3;
 }
@@ -716,7 +718,7 @@ ion-icon:is(:hover, :focus) {
 .shop .btn-link:is(:hover, :focus) { color: var(--hoockers-green); }
 
 .shop-card {
-  background-color: var(--white);
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: var(--transition-2);
@@ -831,6 +833,7 @@ ion-icon:is(:hover, :focus) {
 .banner-card {
   min-height: 420px;
   padding: 30px;
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: var(--transition-2);
@@ -876,7 +879,7 @@ ion-icon:is(:hover, :focus) {
 .feature .section-title { margin-block-end: 40px; }
 
 .feature-card {
-  background-color: var(--white);
+  background-color: var(--card-bg);
   padding: 30px 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -971,7 +974,7 @@ ion-icon:is(:hover, :focus) {
 }
 
 .blog-card {
-  background-color: var(--white);
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: var(--transition-2);
@@ -1533,12 +1536,15 @@ ion-icon:is(:hover, :focus) {
 
 .panel-actions {
   display: flex;
+  justify-content: center;
   gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bg-tertiary);
 }
 
 .panel-actions .btn {
-  flex: 1;
-  padding: 12px 20px;
+  padding: 12px 30px;
   font-size: var(--fs-8);
   font-weight: var(--fw-600);
 }
@@ -1572,6 +1578,77 @@ ion-icon:is(:hover, :focus) {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Color Row - Component Name + Controls Side by Side */
+.color-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--white);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.color-row:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.color-row:last-child {
+  margin-bottom: 0;
+}
+
+.color-row label {
+  flex: 1;
+  margin-bottom: 0;
+  font-size: var(--fs-8);
+  font-weight: var(--fw-500);
+  color: var(--text-primary);
+  min-width: 120px;
+}
+
+.color-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-controls input[type="color"] {
+  width: 50px;
+  height: 40px;
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.color-controls input[type="color"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+}
+
+.hex-input {
+  width: 100px;
+  padding: 8px 10px;
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: var(--fs-9);
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.hex-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+}
+
+.hex-input:invalid {
+  border-color: var(--error-color);
 }
 
 .panel-section .color-input-group {
@@ -2301,7 +2378,7 @@ ion-icon:is(:hover, :focus) {
   }
 
   .navbar .navbar-link {
-    color: var(--black);
+    color: var(--nav-link-color);
     font-size: var(--fs-7);
     font-weight: var(--fw-600);
   }

@@ -51,7 +51,6 @@ class ColorSchemeCustomizer {
     this.panel = document.getElementById('colorSchemePanel');
     this.toggleBtn = document.getElementById('colorPanelToggle');
     this.closeBtn = document.getElementById('colorPanelClose');
-    this.saveBtn = document.getElementById('saveColors');
     this.resetBtn = document.getElementById('resetColors');
     this.schemeButtons = document.querySelectorAll('.scheme-btn');
     
@@ -109,9 +108,6 @@ class ColorSchemeCustomizer {
       badge: document.getElementById('badgeColor')
     };
 
-    this.htmlColorInput = document.getElementById('htmlColorInput');
-    this.applyHtmlBtn = document.getElementById('applyHtmlColor');
-
     this.toast = document.getElementById('toast');
     this.toastClose = document.getElementById('toastClose');
     
@@ -129,17 +125,22 @@ class ColorSchemeCustomizer {
       this.panel.classList.remove('open');
     });
 
-    // Save colors button - only shows toast and closes modal
-    this.saveBtn.addEventListener('click', () => {
-      this.saveCurrentTheme();
-      this.showToast('success', 'Theme Saved!', 'Your color scheme has been applied successfully');
-      this.panel.classList.remove('open');
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+      if (this.panel.classList.contains('open')) {
+        const isClickInside = this.panel.contains(e.target) || this.toggleBtn.contains(e.target);
+        if (!isClickInside) {
+          this.panel.classList.remove('open');
+        }
+      }
     });
 
     // Reset colors
-    this.resetBtn.addEventListener('click', () => {
-      this.resetToDefault();
-    });
+    if (this.resetBtn) {
+      this.resetBtn.addEventListener('click', () => {
+        this.resetToDefault();
+      });
+    }
 
     // Preset scheme buttons
     this.schemeButtons.forEach(btn => {
@@ -160,8 +161,8 @@ class ColorSchemeCustomizer {
     // Load saved colors on page load
     this.loadSavedColors();
 
-    // HTML color input handlers
-    this.initHtmlColorInputs();
+    // Hex input synchronization
+    this.initHexInputSync();
 
     // Card styling handlers
     this.initCardStyling();
@@ -170,46 +171,92 @@ class ColorSchemeCustomizer {
     this.initToastNotifications();
   }
 
-  initHtmlColorInputs() {
-    // Single HTML color input handler
-    this.applyHtmlBtn.addEventListener('click', () => {
-      if (this.htmlColorInput && this.htmlColorInput.value.trim()) {
-        const color = this.parseHtmlColor(this.htmlColorInput.value.trim());
-        if (color) {
-          // Apply to text color by default, user can change manually
-          this.colorInputs.text.value = color;
-          this.previewColors();
-          this.htmlColorInput.style.borderColor = '';
-          this.htmlColorInput.value = '';
-        } else {
-          this.htmlColorInput.style.borderColor = '#e74c3c';
-          this.htmlColorInput.placeholder = 'Invalid color code!';
-          setTimeout(() => {
-            this.htmlColorInput.style.borderColor = '';
-            this.htmlColorInput.placeholder = this.htmlColorInput.getAttribute('data-original-placeholder') || '';
-          }, 3000);
-        }
-      }
-    });
+  initHexInputSync() {
+    // Get all hex input fields
+    const hexInputs = document.querySelectorAll('.hex-input');
 
-    // Example color click handlers
-    document.querySelectorAll('.example-color').forEach(example => {
-      example.addEventListener('click', (e) => {
-        const color = e.target.dataset.color;
-        this.htmlColorInput.value = color;
-        this.htmlColorInput.focus();
+    hexInputs.forEach(hexInput => {
+      const colorPickerId = hexInput.getAttribute('data-for');
+      const colorPicker = document.getElementById(colorPickerId);
+
+      if (!colorPicker) return;
+
+      // Update hex input when color picker changes
+      colorPicker.addEventListener('input', (e) => {
+        hexInput.value = e.target.value.toUpperCase();
+      });
+
+      // Update color picker when hex input changes
+      hexInput.addEventListener('input', (e) => {
+        let hexValue = e.target.value.trim();
+
+        // Auto-add # if missing
+        if (hexValue && !hexValue.startsWith('#')) {
+          hexValue = '#' + hexValue;
+        }
+
+        // Validate hex color (3 or 6 digits)
+        const isValid = /^#([0-9A-Fa-f]{3}){1,2}$/.test(hexValue);
+
+        if (isValid) {
+          // Convert 3-digit to 6-digit hex if needed
+          if (hexValue.length === 4) {
+            const r = hexValue[1];
+            const g = hexValue[2];
+            const b = hexValue[3];
+            hexValue = `#${r}${r}${g}${g}${b}${b}`;
+          }
+
+          colorPicker.value = hexValue.toUpperCase();
+          hexInput.value = hexValue.toUpperCase();
+          hexInput.style.borderColor = '';
+
+          // Trigger preview
+          this.previewColors();
+        } else if (hexValue.length >= 4) {
+          // Show error state for invalid input
+          hexInput.style.borderColor = 'var(--error-color)';
+        }
+      });
+
+      // Handle blur to clean up input
+      hexInput.addEventListener('blur', (e) => {
+        let hexValue = e.target.value.trim();
+
+        if (!hexValue.startsWith('#')) {
+          hexValue = '#' + hexValue;
+        }
+
+        const isValid = /^#([0-9A-Fa-f]{3}){1,2}$/.test(hexValue);
+
+        if (isValid) {
+          if (hexValue.length === 4) {
+            const r = hexValue[1];
+            const g = hexValue[2];
+            const b = hexValue[3];
+            hexValue = `#${r}${r}${g}${g}${b}${b}`;
+          }
+          hexInput.value = hexValue.toUpperCase();
+          hexInput.style.borderColor = '';
+        } else {
+          // Reset to current color picker value
+          hexInput.value = colorPicker.value.toUpperCase();
+          hexInput.style.borderColor = '';
+        }
+      });
+
+      // Handle paste events
+      hexInput.addEventListener('paste', (e) => {
+        setTimeout(() => {
+          let hexValue = e.target.value.trim();
+
+          if (!hexValue.startsWith('#')) {
+            hexValue = '#' + hexValue;
+            hexInput.value = hexValue;
+          }
+        }, 10);
       });
     });
-
-    // Enter key support for HTML input
-    this.htmlColorInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.applyHtmlBtn.click();
-      }
-    });
-
-    // Store original placeholder
-    this.htmlColorInput.setAttribute('data-original-placeholder', this.htmlColorInput.placeholder);
   }
 
   applyPresetScheme(schemeName) {
@@ -358,8 +405,75 @@ class ColorSchemeCustomizer {
   }
 
   resetToDefault() {
-    this.applyPresetScheme('default');
-    this.updateActiveButton(document.querySelector('[data-scheme="default"]'));
+    // Define default color values
+    const defaultColors = {
+      text: '#1f2937',
+      link: '#2563eb',
+      heading: '#111827',
+      background: '#ffffff',
+      header: '#ffffff',
+      card: '#ffffff',
+      button: '#2563eb',
+      buttonHover: '#1d4ed8',
+      buttonActive: '#1e40af',
+      cardShadow: '#000000',
+      cardBorderRadius: '12',
+      cardShadowIntensity: '12',
+      icon: '#6b7280',
+      iconHover: '#374151',
+      accent: '#f59e0b',
+      secondaryAccent: '#10b981',
+      highlight: '#fef3c7',
+      navLink: '#374151',
+      navLinkHover: '#111827',
+      navLinkActive: '#059669',
+      breadcrumb: '#6b7280',
+      success: '#10b981',
+      error: '#ef4444',
+      warning: '#f59e0b',
+      info: '#3b82f6',
+      border: '#e5e7eb',
+      borderHover: '#d1d5db',
+      divider: '#f3f4f6',
+      focus: '#3b82f6',
+      label: '#374151',
+      tagBg: '#f3f4f6',
+      tagText: '#6b7280',
+      badge: '#ef4444'
+    };
+
+    // Update all color pickers
+    Object.keys(defaultColors).forEach(key => {
+      if (this.colorInputs[key]) {
+        this.colorInputs[key].value = defaultColors[key];
+      }
+    });
+
+    // Update all hex inputs
+    document.querySelectorAll('.hex-input').forEach(hexInput => {
+      const colorPickerId = hexInput.getAttribute('data-for');
+      const colorPicker = document.getElementById(colorPickerId);
+      if (colorPicker) {
+        hexInput.value = colorPicker.value.toUpperCase();
+      }
+    });
+
+    // Update range value displays
+    if (document.getElementById('borderRadiusValue')) {
+      document.getElementById('borderRadiusValue').textContent = '12px';
+    }
+    if (document.getElementById('shadowIntensityValue')) {
+      document.getElementById('shadowIntensityValue').textContent = '12px';
+    }
+
+    // Apply the default colors
+    this.previewColors();
+
+    // Clear localStorage
+    localStorage.removeItem('customColorScheme');
+
+    // Show toast notification
+    this.showToast('success', 'Reset Complete!', 'Color scheme has been reset to default');
   }
 
   updateActiveButton(activeBtn) {
